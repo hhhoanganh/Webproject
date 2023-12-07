@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->foreignId('roles_id')->unsigned()->constrained(); // Check 'unsigned'
+            $table->enum('status', ['active', 'inactive'])->default('inactive'); // Enum type for 'status'
             $table->rememberToken();
             $table->timestamps();
         });
