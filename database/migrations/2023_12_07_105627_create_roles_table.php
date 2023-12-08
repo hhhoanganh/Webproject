@@ -9,7 +9,8 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    // database/migrations/yyyy_mm_dd_create_roles_table.php
+    public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
