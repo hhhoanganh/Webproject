@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use app\Models\Authenication\Permissions;
-use app\Models\Authenication\Role;
-use app\Models\Authenication\User;
+use App\Models\Authenication\Enum\RoleEnum;
+use App\Models\Authenication\Permissions;
+use App\Models\Authenication\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,20 +26,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        foreach ($this->roles as $role => $permissions) {
-            $role = Role::create(['name' => $role]);
-            foreach ($permissions as $permission) {
-                $permission = Permissions::create(['name' => $permission]);
-                $role->permissions()->attach($permission);
+        // Seed roles and permissions
+        foreach ($this->roles as $roleName => $permissions) {
+            $role = Role::create(['name' => $roleName]);
+
+            foreach ($permissions as $permissionName) {
+                $permission = Permissions::create(['name' => $permissionName]);
+                $permission->roles()->attach($role);
             }
         }
-        $users = User::create([
-            'name' => Str::random(10),
-            'email' => Str::random(10).'@gmail.com',
-            'password' => Hash::make('password'),
-        ]);
-        $role = Role::where('name', 'CUSTOMER')->first();
-        $users->role()->attach($role);
+
+        // Seed users with roles
+        for ($x = 0; $x <= 10; $x++) {
+            $user = User::create([
+                'name' => Str::random(10),
+                'email' => Str::random(10) . '@gmail.com',
+                'password' => Hash::make('123456'),
+                'phone' => Str::random(10),
+                'status'=> 1,
+            ]);
+
+            $role = Role::where('name', RoleEnum::CUSTOMER)->first();
+            $role->users()->attach($user);
+        }
     }
 }

@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Models\Product;
+
+use App\Models\Cart\Cart;
+use App\Models\Order\OrderItems;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    use HasFactory;
+    protected $table = 'products';
+
+    protected $fillable = [
+        'name',
+        'description',
+        'thumbnail',
+        'price',
+    ];
+    protected $guarded = ['id'];
+
+    protected $visible = ['id','name','description','thumbnail','price','images'];
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItems::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Images::class);
+    }
+
+    public function review()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
+    }
+}

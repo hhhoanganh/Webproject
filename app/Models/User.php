@@ -1,7 +1,10 @@
 <?php
 
-namespace app\Models\Authenication;
+namespace App\Models;
 
+use App\Models\Authenication\Role;
+use App\Models\Cart\Cart;
+use App\Models\Order\Order;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,12 +21,16 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
      *
      * @var array<int, string>
      */
+    protected $table = "users";
     protected $fillable = [
         'name',
         'email',
         'password',
         'status',
-        'address'
+        'phone',
+        'address',
+        'verification_code',
+        'token_expires_at'
     ];
 
     /**
@@ -43,12 +50,40 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'token_expires_at' => 'datetime'
+    ];
+
+    protected $visible = [
+        'name',
+        'email',
+        'phone',
+        'address'
     ];
     protected $guarded = ['id'];
 
-    public function role()
+    public function roles()
     {
-        return $this->belongsToMany(Role::class);
+        return $this->hasMany(Role::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+    public function hasPermission($permission)
+    {
+        // Check if any of the user's roles have the specified permission
+        foreach ($this->roles as $role) {
+            if ($role->permissions->contains('name', $permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

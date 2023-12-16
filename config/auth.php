@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -67,7 +69,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => \app\Models\Authenication\User::class,
+            'model' => User::class,
         ],
 
         // 'users' => [
@@ -102,6 +104,9 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+    ],
+    'jwt' => [
+        'ttl' => env('JWT_TTL', 60),
     ],
 
     /*
