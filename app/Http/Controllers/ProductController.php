@@ -1,31 +1,38 @@
+
 <?php
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Product\Product;
+use App\Models\Response\ProductResponse;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    protected $productModel;
+    //
+    protected static $size = 10;
 
-    public function __construct(){
-        $this->productModel = new Product;
-    }
-    public function getAllProducts()
+    public function getAllProduct(Request $request)
     {
-        $productList = $this->productModel->get();
-        if ($productList->isNotEmpty())
-            return $productList;
-        else
-            return null;
-    }
+        $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'sortBy' => 'nullable|string|in:name,price',
+            'sortDirection' => 'nullable|in:asc,desc',
+        ]);
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
+        $sortDirection = $request->input('sortDirection', 'asc');
+        $products = Product::with('images')->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);
+        $meta = ['current_page' => $products->currentPage(),
+                'from' => $products->firstItem(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'to' => $products->lastItem(),
+                'total' => $products->total(),];
 
-    public function getProductById($id)
-    {
-        $product = $this->productModel->where('id',$id)->get();
-        if ($product->isNotEmpty())
-            return $product;
-        else
-            return null;
+        return $this->sendSuccess(
+            $products->items(),
+            $meta
+        );
     }
 }
