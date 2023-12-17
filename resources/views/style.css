@@ -1,0 +1,157 @@
+.cart {
+    padding: 100px 0;
+}
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 24px;
+}
+.container-left{
+    width: 50%;
+    padding-right: 12px;
+}
+.container-left table{
+    width: 100%;
+    text-align: left;
+}
+.container-left table th{
+    padding-bottom: 30px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #333;
+    border-collapse: collapse;
+    border-bottom: 2px solid #dddddd;
+}
+.container-left table input{
+    width: 50px;
+    text-align: center;
+}
+.container-left table td:nth-child(2) img{
+    width: 130px;
+}
+.container-left table th:first-child {
+    text-align: left;
+}
+.container-right{
+    flex: 1;
+    padding-left: 12px;
+    border-left: 2px solid #dddddd;
+}
+.container-right table{
+    width: 100%;
+}
+.container-right table th{
+    padding-bottom: 30px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #333;
+    border-collapse: collapse;
+    border-bottom: 2px solid #dddddd;
+}
+.container-right table td {
+    text-align: right;
+    font-size: 12px;
+    color: #333;
+    padding: 6px 0;
+}
+.container-button button{
+    background: black;
+    color: white;
+    padding: 0 24px;
+    cursor: pointer;
+}
+.number-input {
+    display: flex;
+    align-items: center;
+    width: 10px;
+    appearance: textfield;
+}
+
+.control-button {
+    padding: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.number-field {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    align-items: center;
+}
+/*-- deliverly cart --*/
+.headtext {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.headtext a {
+    color: #000;
+    text-decoration: none;
+}
+.left-container-payment{
+    width : 60%;
+    padding-right: 12px;
+}
+.left-container-payment-information label{
+    font-size: 12px;
+    margin-bottom: 6px;
+    display: block;
+}
+.left-container-payment-information input{
+    margin-right: 12px;
+    width: 70%;
+    height: 35px;
+    border: 1px solid #dddddd;
+    padding-left: 6px;
+}
+.left-container-payment-button p {
+    display: inline-block;
+    font-size: 12px;
+}
+.left-container-payment-button button {
+    height: 35px;
+    border: 2px solid black;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.left-container-payment-button button:hover {
+    background: black;
+    color: white;
+}
+.right-container-payment{
+    width: 40%;
+    padding-left: 12px;
+    border-left: 2px solid #dddddd;
+    height: auto;
+}
+.right-container-payment-information table{
+    width: 100%;
+    font-size: 12px;
+    text-align: center;
+}
+.right-container-payment-information table tr th:first-child{
+    text-align: left;
+}
+.right-container-payment-information table tr th{
+    padding-bottom: 12px;
+    border-bottom: 2px solid #dddddd;
+}
+.right-container-payment-information table tr th:last-child{
+    text-align: right;
+}
+.right-container-payment-information table tr td{
+    padding: 6px 0;
+}
+.right-container-payment-information table tr:nth-child(4){
+    border-top: 2px solid #dddddd;
+}
+.right-container-payment-information tr td:last-child{
+    text-align: right;
+}
+.right-container-payment-information tr td:first-child{
+    text-align: left;
+}
