@@ -21,6 +21,8 @@ return new class extends Migration
             $table->integer("status",false,false)->default(0);
             $table->dateTime('token_expires_at')->nullable();
             $table->string("address")->nullable();
+            $table->integer('coupon')->nullable();
+            $table->integer('point')->nullable();
             $table->timestamps();
         });
     }

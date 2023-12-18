@@ -18,6 +18,13 @@ class OrderItems extends Model
         'quantity',
 
     ];
+    protected $visible = [
+        'id',
+        'product_id',
+        'order_id',
+        'price',
+        'quantity',
+    ];
 
     public function product()
     {

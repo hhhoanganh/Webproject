@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use http\Exception;
 use Response;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -23,7 +22,6 @@ class Controller extends BaseController
 
     public function sendSuccess($data = [], $meta = [], $message = "success")
     {
-        try {
             return Response::json([
                 'status' => AppConstant::SUCCESS_CODE,
                 'error_code' => 0,
@@ -31,10 +29,5 @@ class Controller extends BaseController
                 'data' => $data,
                 'meta' => $meta
             ]);
-        } catch (Exception $e) {
-            return $this -> sendError("Lỗi không xác định");
-        }
-
-
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models\Order;
 
+use App\Models\Note;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +18,20 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'total',
-        'address'
+        'address',
+        'status',
+        'code'
     ];
+
+//    protected $visible = [
+//        'id',
+//        'user_id',
+//        'total',
+//        'address',
+//        'status',
+//        'order_items'
+//
+//    ];
 
     public function orderItems()
     {
@@ -28,10 +42,6 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function bank()
-    {
-        return $this->belongsTo(Bank::class);
-    }
 
     public function note()
     {
@@ -41,12 +51,6 @@ class Order extends Model
     public function payment()
     {
         return $this->belongsTo(Payment::class);
-    }
-
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
     }
 
 }

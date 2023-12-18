@@ -20,6 +20,7 @@ class Cart extends Model
         'price',
     ];
     protected $visible = [
+        'id',
         'product_id',
         'quantity',
         'price',
