@@ -11,7 +11,7 @@ class ProductController extends Controller
     //
     protected static $size = 10;
 
-    public function getAllProduct(Request $request)
+    public function getAllProducts(Request $request)
     {
         $request->validate([
             'page' => 'nullable|integer|min:1',
@@ -33,5 +33,11 @@ class ProductController extends Controller
             $products->items(),
             $meta
         );
+    }
+
+    public function getProduct(Request $request)
+    {
+        $product = Product::find("id",$request['id'])->get();
+        return $this->sendSuccess($product);
     }
 }
