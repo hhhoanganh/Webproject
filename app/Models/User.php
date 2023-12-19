@@ -86,6 +86,11 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         return false;
     }
 
+    public function review()
+    {
+        return $this->hasMany(Review::class);
+    }
+
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

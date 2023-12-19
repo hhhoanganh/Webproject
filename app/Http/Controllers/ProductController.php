@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers;
@@ -12,7 +11,7 @@ class ProductController extends Controller
     //
     protected static $size = 10;
 
-    public function getAllProduct(Request $request)
+    public function getAllProducts(Request $request)
     {
         $request->validate([
             'page' => 'nullable|integer|min:1',
@@ -34,5 +33,43 @@ class ProductController extends Controller
             $products->items(),
             $meta
         );
+    }
+
+    public function getProduct(Request $request)
+    {
+        $product = Product::where("id",$request['id'])->get();
+        return $this->sendSuccess($product);
+    }
+
+    public function addProduct(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric',
+            'thumbnail' => 'required',
+            'file' => 'required|array|min:1',
+            'file.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Create the product
+        $product = Product::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'price' => $request->input('price'),
+        ]);
+
+        $images = $request->file('file');
+        $thumbnail = $request->file('thumbnail');
+        $uploadedImages = [];
+        $uploadedDir = 'data/' . (string)$product->id;
+        $product->thumbnail = $this->saveFile($uploadedDir,$product->id,$thumbnail);
+        $product->save();
+//        foreach ($images as $image) {
+//            $path = $image->store('uploads', $product->id,'public');
+//            $uploadedImages[] = $path;
+//        }
+
+        return response()->json(['images' => $product->thumbnail]);
     }
 }

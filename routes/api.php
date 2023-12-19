@@ -29,10 +29,16 @@ use App\Http\Controllers\AuthController;
     })->middleware(['auth:api']);
 
     Route::group(['prefix' => '/v1/products'], function () {
-        Route::get(null,[ProductController::class,'getAllProduct']);
+        Route::get(null,[ProductController::class,'getAllProducts']);
+        Route::get('/{id}',[ProductController::class,'getProduct']);
+
     });
     Route::group(['prefix' => '/v1/orders'], function () {
         Route::post(null,[OrderController::class,'addOrders']);
+        Route::get(null,[OrderController::class,'getOrders']);
+        Route::get('/{id}',[OrderController::class,'getOrder']);
+//        Route::post()
+
     })->middleware(['auth:api']);
 
 Route::group(['prefix' => '/v1/profiles'], function () {
@@ -45,3 +51,9 @@ Route::group(['prefix' => '/v1/carts'], function () {
     Route::post(null,[\App\Http\Controllers\CartController::class,'addCart']);
 })->middleware(['permission:READ']);
 
+Route::group(['prefix' => '/v1/reviews'], function () {
+    Route::post(null,[\App\Http\Controllers\ReviewController::class,'addReview']);
+    Route::get(null,[\App\Http\Controllers\ReviewController::class,'productReview']);
+    Route::put(null,[\App\Http\Controllers\ReviewController::class,'editReview']);
+    Route::delete(null,[\App\Http\Controllers\ReviewController::class,'deleteReview']);
+})->middleware(['permission:READ']);

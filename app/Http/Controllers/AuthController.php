@@ -26,16 +26,18 @@ class AuthController extends Controller
         ]);
         $credentials = $request->only('email', 'password');
         $token = Auth::attempt($credentials);
-
+        $user = Auth::user();
         if (!$token) {
             // Check if the email exists in the database
             return $this->sendError("Unauthorized",AppConstant::UNAUTHORIZED_CODE);
+        }
+        if ($user->status === 0) {
+            return $this->sendError("ACCOUNT IS INACTIVE",AppConstant::BAD_REQUEST_CODE);
         }
         $userExists = User::where('email', $request->email)->exists();
         if (!$userExists) {
             return $this->sendError("Email not found.", AppConstant::NOT_FOUND_CODE);
         }
-        $user = Auth::user();
         return $this->sendSuccess(
             [
                 'user' => $user,
@@ -97,7 +99,6 @@ class AuthController extends Controller
 
     public function logout()
     {
-        dd(Auth::user());
         Auth::logout();
         return $this->sendSuccess([],"Successful logout");
     }
