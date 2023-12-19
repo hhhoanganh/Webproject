@@ -59,4 +59,21 @@ class OrderController extends Controller
 //        }
         return $this->sendSuccess($order);
     }
+
+    public function salesOrders(){
+        $totals = Order::where('status', 'completed')
+        ->with('orderItems') // Load mối quan hệ OrderItem
+        ->get()
+        ->flatMap(function ($order) {
+            return $order->orderItems->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d');
+            })->map(function ($items) {
+                return [
+                'order_date' => $items->first()->created_at->format('Y-m-d'),
+                'total_price' => $items->sum('price'),
+                ];
+            });
+        });
+        return $this->sendSuccess($totals);
+    }
 }
