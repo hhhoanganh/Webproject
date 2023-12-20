@@ -22,7 +22,7 @@ class Product extends Model
     ];
     protected $guarded = ['id'];
 
-    protected $visible = ['code','name','description','thumbnail','price','reviews'];
+    protected $visible = ['id','name','description','thumbnail','price','reviews'];
 
     public function orderItems()
     {
