@@ -85,20 +85,20 @@ class ProductController extends Controller
 
         return $path;
     }
-    function searchProduct(Request $request)
-    {
-        $products = [];
-        $page = $request->input('page', 1);
-        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
-        $sortDirection = $request->input('sortDirection', 'asc');
-        if($request->has('q')){
-            $search = $request->q;
-            $products =Product::select("id", "name")
-                ->where('name', 'LIKE', "%$search%")
-                ->get()->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);;
-        }
-        return $this->sendSuccess($products);
-    }
+//    function searchProduct(Request $request)
+//    {
+//        $products = [];
+//        $page = $request->input('page', 1);
+//        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
+//        $sortDirection = $request->input('sortDirection', 'asc');
+//        if($request->has('q')){
+//            $search = $request->q;
+//            $products =Product::select("id", "name")
+//                ->where('name', 'LIKE', "%$search%")
+//                ->get()->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);;
+//        }
+//        return $this->sendSuccess($products);
+//    }
 
 
 }
