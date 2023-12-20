@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product\Images;
 use App\Models\Product\Product;
-use App\Models\Response\ProductResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 class ProductController extends Controller
 {
     //
-    protected static $size = 10;
+    protected static int $size = 10;
 
     public function getAllProducts(Request $request)
     {
@@ -37,7 +39,7 @@ class ProductController extends Controller
 
     public function getProduct(Request $request)
     {
-        $product = Product::where("id",$request['id'])->get();
+        $product = Product::where("id",$request['id'])->with('reviews')->get();
         return $this->sendSuccess($product);
     }
 
@@ -47,9 +49,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'thumbnail' => 'required',
-            'file' => 'required|array|min:1',
-            'file.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'thumbnail' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         // Create the product
@@ -57,19 +57,33 @@ class ProductController extends Controller
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'price' => $request->input('price'),
+            'thumbnail' => ''
         ]);
-
-        $images = $request->file('file');
-        $thumbnail = $request->file('thumbnail');
-        $uploadedImages = [];
-        $uploadedDir = 'data/' . (string)$product->id;
-        $product->thumbnail = $this->saveFile($uploadedDir,$product->id,$thumbnail);
-        $product->save();
-//        foreach ($images as $image) {
-//            $path = $image->store('uploads', $product->id,'public');
-//            $uploadedImages[] = $path;
-//        }
-
-        return response()->json(['images' => $product->thumbnail]);
+//        dd($images);
+        $thumbnailName = $request->file('thumbnail')->getClientOriginalName();
+        $uploadedDir = '/data/' . $product->id;
+        $thumbnailPath = $this->saveFile($uploadedDir, $thumbnailName, $request->file('thumbnail'));
+        if ($thumbnailPath) {
+            $product->thumbnail = 'storage/app/public/data/'.$product->id.'/'.$thumbnailName;
+            $product->save();
+        }
+        return $this->sendSuccess($product,null,"Add product success");
     }
+
+    public static function saveFile($uploadDir, $fileName, UploadedFile $uploadedFile)
+    {
+        // Ensure the directory exists or create it
+        Storage::makeDirectory($uploadDir);
+
+        // Store the file in the specified directory
+        $path = $uploadedFile->storeAs($uploadDir, $fileName);
+
+        return $path;
+    }
+    function searchProduct(Request $request)
+    {
+
+    }
+
+
 }

@@ -29,10 +29,10 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('status')->nullable();
             $table->string('code')->nullable()->unique();
-            $table->integer("note_id")->nullable();
+            $table->foreignId("note_id")->nullable();
             $table->string("refusal_reason")->nullable();
             $table->integer("coupon_used")->default(0);
-            $table->integer("payment_id")->default(1);
+            $table->foreignId("payment_id")->default(1);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');

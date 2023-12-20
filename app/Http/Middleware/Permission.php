@@ -19,7 +19,6 @@ class Permission
         if (!auth()->user()->hasPermission($permission)) {
             abort(403, 'Unauthorized action.');
         }
-
         return $next($request);
     }
 }

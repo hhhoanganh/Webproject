@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Authenication\Permissions;
 use App\Models\Authenication\Role;
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
@@ -63,7 +64,7 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
 
     public function roles()
     {
-        return $this->hasMany(Role::class);
+        return $this->belongsToMany(Role::class);
     }
 
     public function orders()
@@ -74,17 +75,21 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     {
         return $this->hasMany(Cart::class);
     }
-    public function hasPermission($permission)
+    public function hasPermission($permission): bool
     {
+        $hasPermission = Permissions::where('name', $permission)->exists();
+
         // Check if any of the user's roles have the specified permission
         foreach ($this->roles as $role) {
-            if ($role->permissions->contains('name', $permission)) {
+            // Assuming 'permissions' is the relationship between Role and Permission
+            if ($role->permissions()->exists() && $hasPermission) {
                 return true;
             }
         }
-
         return false;
     }
+
+
 
     public function review()
     {

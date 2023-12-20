@@ -57,3 +57,8 @@ Route::group(['prefix' => '/v1/reviews'], function () {
     Route::put(null,[\App\Http\Controllers\ReviewController::class,'editReview']);
     Route::delete(null,[\App\Http\Controllers\ReviewController::class,'deleteReview']);
 })->middleware(['permission:READ']);
+
+Route::post('/v1/products',[\App\Http\Controllers\ProductController::class,'addProduct']);
+Route::get('/v1/verifyOrder',[OrderController::class,'verifyOrder']);
+Route::post('/v1/changePermission',[AuthController::class,'addPermissions'])
+    ->middleware(['permission:add_permission']);

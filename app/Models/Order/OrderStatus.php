@@ -8,5 +8,6 @@ enum OrderStatus:String
     case WAIT_CONFIRMED = 'WAIT_CONFIRMED';
     case CONFIRMED = 'CONFIRMED';
     case SHIPPING = 'SHIPPING';
+    case CANCEL = 'CANCEL';
     case COMPLETED = 'COMPLETED';
 }
