@@ -83,7 +83,7 @@ class OrderController extends Controller
         ->selectRaw('DATE(created_at) as order_date, COUNT(*) as order_count')
         ->get();
 
-        return $this->sendSuccess()->view('your-view-name', compact('completedOrderCountByDate'));
+        return $this->sendSuccess()->view('number of success', compact('completedOrderCountByDate'));
     }
 
     public function numberOfOrdersFailed(){
@@ -92,6 +92,6 @@ class OrderController extends Controller
         ->selectRaw('DATE(created_at) as order_date, COUNT(*) as order_count')
         ->get();
 
-        return $this->sendSuccess()->view('your-view-name', compact('completedOrderCountByDate'));
+        return $this->sendSuccess()->view('number of failed', compact('completedOrderCountByDate'));
     }
 }

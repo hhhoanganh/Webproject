@@ -33,6 +33,7 @@ use App\Http\Controllers\AuthController;
     });
     Route::group(['prefix' => '/v1/orders'], function () {
         Route::post(null,[OrderController::class,'addOrders']);
+
     })->middleware(['auth:api']);
 
 Route::group(['prefix' => '/v1/profiles'], function () {
@@ -44,4 +45,6 @@ Route::group(['prefix' => '/v1/carts'], function () {
     Route::get(null,[\App\Http\Controllers\CartController::class,'getCart']);
     Route::post(null,[\App\Http\Controllers\CartController::class,'addCart']);
 })->middleware(['permission:READ']);
-
+Route::get('/v1/products/sales',[OrderController::class,'salesOrders']);
+Route::get('/v1/products/failed',[OrderController::class,'numberOfSuccess']);
+Route::get('/v1/products/success',[OrderController::class,'numberOfFailed']);
