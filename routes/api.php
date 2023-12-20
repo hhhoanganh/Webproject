@@ -24,22 +24,30 @@ use App\Http\Controllers\AuthController;
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/verify',[AuthController::class,'verifyAccount']);
     })->middleware(['auth:api']);
+Route::post('/v1/changePermission',[AuthController::class,'addPermissions'])
+    ->middleware(['permission:add_permission']);
 
     Route::group(['prefix' => '/v1/products'], function () {
         Route::get(null,[ProductController::class,'getAllProducts']);
         Route::get('/{id}',[ProductController::class,'getProduct']);
-
     });
-    Route::group(['prefix' => '/v1/orders'], function () {
+Route::post('/v1/products',[\App\Http\Controllers\ProductController::class,'addProduct'])->middleware('permission:add_product');
+
+
+Route::group(['prefix' => '/v1/orders'], function () {
         Route::post(null,[OrderController::class,'addOrders']);
         Route::get(null,[OrderController::class,'getOrders']);
-        Route::get('/{id}',[OrderController::class,'getOrder']);
+        Route::get('/{code}',[OrderController::class,'getOrder']);
 //        Route::post()
-
     })->middleware(['auth:api']);
+
+Route::get('/v1/verifyOrder',[OrderController::class,'verifyOrder']);
+Route::post('/v1/changeStatusOrder',[OrderController::class,'changeStatusOrder'])
+    ->middleware(['permission:change_status_order']);
+Route::post('/v1/cancelOrder',[OrderController::class,'cancelOrder'])
+    ->middleware(['permission:cancel_order']);
 
 Route::group(['prefix' => '/v1/profiles'], function () {
     Route::get(null,[UserController::class,'getProfile']);
@@ -56,9 +64,5 @@ Route::group(['prefix' => '/v1/reviews'], function () {
     Route::get(null,[\App\Http\Controllers\ReviewController::class,'productReview']);
     Route::put(null,[\App\Http\Controllers\ReviewController::class,'editReview']);
     Route::delete(null,[\App\Http\Controllers\ReviewController::class,'deleteReview']);
-})->middleware(['permission:READ']);
+})->middleware(['permission:review']);
 
-Route::post('/v1/products',[\App\Http\Controllers\ProductController::class,'addProduct']);
-Route::get('/v1/verifyOrder',[OrderController::class,'verifyOrder']);
-Route::post('/v1/changePermission',[AuthController::class,'addPermissions'])
-    ->middleware(['permission:add_permission']);

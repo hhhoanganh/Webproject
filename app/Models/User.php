@@ -31,7 +31,9 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         'phone',
         'address',
         'verification_code',
-        'token_expires_at'
+        'token_expires_at',
+        'point',
+        'coupon'
     ];
 
     /**
@@ -58,7 +60,7 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         'name',
         'email',
         'phone',
-        'address'
+        'address',
     ];
     protected $guarded = ['id'];
 

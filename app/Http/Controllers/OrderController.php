@@ -29,7 +29,6 @@ class OrderController extends Controller
             return $this->sendError("No AUTHORIZED", AppConstant::UNAUTHORIZED_CODE);
         }
         $coupon =  $user->coupon;
-
         // Create a new order
         $order = Order::create(
             [
@@ -37,14 +36,7 @@ class OrderController extends Controller
                 'status' => OrderStatus::PENDING,
             ]
         );
-        if ($request["coupon_used"] === 1) {
-            if(!$coupon) {
-                return $this->sendError("You dont have any coupon");
-            }
-        }
-
         $order->coupon_used = $request["coupon_used"];
-
         foreach ($request->products as $product) {
             $orderItem = OrderItems::updateOrCreate(
                 [
@@ -56,19 +48,29 @@ class OrderController extends Controller
                     'price' =>0
                 ]
             );
-
             $productModel = Product::find($product['product_id']);
             $orderItem->price = $productModel->price * $orderItem->quantity;
-
             $orderItem->save();
         }
         $token = strtoupper(Str::random(6));
         $order->code = $token;
-        $order->total = $order->orderItems->sum('price');
+        if ($request["coupon_used"] === 1) {
+            if(!$coupon) {
+                return $this->sendError("You dont have any coupon");
+            }
+            $order->total = ($order->orderItems->sum('price') * 50)/100;
+            $user->coupon = $coupon - 1;
+            MailController::sendOrderEmail($user->name, $user->email, $token,$order);
+            $user->save();
+            $order->save();
+        }
+        $total_before_sale = $order->orderItems->sum('price');
+        $order->total = ($order->orderItems->sum('price') * 50)/100;
         MailController::sendOrderEmail($user->name, $user->email, $token,$order);
         $order->save();
-
-        return $this->sendSuccess($order);
+        return $this->sendSuccess([$order,
+            'total_before' => $total_before_sale
+            ]);
     }
 
     function getOrders()
@@ -79,14 +81,13 @@ class OrderController extends Controller
 
     function getOrder(Request $request)
     {
-        $order = Order::where('id',$request['id'])->get();
+        $order = Order::where('code',$request['code'])->get();
         return $this->sendSuccess($order);
     }
 
     public function verifyOrder(Request $request)
     {
         $order = Order::where('code', $request['token'])->first();
-        //        dd($order);
         $id = $order->user_id;
         $carts = Cart::where('user_id', $id)->get();
         if ($carts) {
@@ -106,25 +107,30 @@ class OrderController extends Controller
 
     function changeStatusOrder(Request $request)
     {
-        $order = Order::where('code',$request['code']);
-        $user = User::where($order->user_id)->get();
-        if ($order) {
-            if ($order->status === OrderStatus::CONFIRMED) {
-                $order-> status = OrderStatus::SHIPPING;
-                MailController::sendSignUpEmail($user->name, $user->email, $request->input('code'));
-                $order->save();
-                return $this->sendSuccess($order,null,"Order has changed status: SHIPPING");
-            }
-            if ($order->status === OrderStatus::SHIPPING) {
-                $order-> status = OrderStatus::COMPLETED;
-                $order-> refusal_reason = null;
-                $order->save();
-                $user = User::find($order->user_id);
-                $point_total = $order->orderItems->sum('quantity') + $user->point;
-                $user->point = $point_total;
-                $user->save();
-                return $this->sendSuccess($order,null,"Order has changed status: COMPLETED");
-            }
+        $this->validate($request,[
+            'code'=>'required'
+        ]);
+        $order = Order::where('code', $request['code'])->first();
+        $id = $order->user_id;
+        if ($order->status == OrderStatus::WAIT_CONFIRMED->name) {
+            $order-> status = OrderStatus::CONFIRMED;
+            $order->save();
+            return $this->sendSuccess($order,null,"Order has changed status: CONFIRM");
+        }
+        if ($order->status === OrderStatus::CONFIRMED->name) {
+            $order-> status = OrderStatus::SHIPPING;
+            $order->save();
+            return $this->sendSuccess($order,null,"Order has changed status: SHIPPING");
+        }
+        if ($order->status == OrderStatus::SHIPPING->name) {
+            $order-> status = OrderStatus::COMPLETED;
+            $order-> refusal_reason = null;
+            $user = User::where('id',$id)->first();
+            $point_total = $order->orderItems->sum('quantity') + $user->point;
+            $user->point = $point_total;
+            $user->save();
+            $order->save();
+            return $this->sendSuccess($order,null,"Order has changed status: COMPLETED");
         }
         return $this->sendError('Order not found',AppConstant::NOT_FOUND_CODE);
     }
@@ -134,10 +140,15 @@ class OrderController extends Controller
         $this->validate($request, [
             'reason' => 'required',
         ]);
-        $order = Order::where('code',$request['code']);
-        if ($order->status === OrderStatus::WAIT_CONFIRMED) {
+        $user = Auth::user();
+        $order = Order::where('code',$request['code'])->first();
+        if ($order->status === OrderStatus::WAIT_CONFIRMED->name ||
+            $order->status === OrderStatus::CONFIRMED->name
+            && auth()->user()->id === $order->user_id) {
             $order->status = OrderStatus::CANCEL;
             $order->refusal_reason = $request->input(['reason']);
+            $user->coupon = $user->coupon + 1;
+            $user-> save();
             $order->save();
             return $this->sendSuccess($order,null,'Order has cancelled');
         }

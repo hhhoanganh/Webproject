@@ -45,6 +45,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'authorization' => [
                     'type' => 'bearer',
+                    'role' => $user->roles()->get()
                 ]
             ], null,
             "Login Successful!");
@@ -144,7 +145,7 @@ class AuthController extends Controller
         }
         $data = [
             'roles' => [$role,$roleSuper],
-            'permission' => $permission
+            'permission' => [$permission]
         ];
         return $this->sendSuccess($data,null,"change permission success");
     }
