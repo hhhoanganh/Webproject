@@ -76,4 +76,22 @@ class OrderController extends Controller
         });
         return $this->sendSuccess($totals);
     }
+
+    public function numberOfOrdersSuccess(){
+        $completedOrderCountByDate = Order::where('status', 'completed')
+        ->groupBy('created_at')
+        ->selectRaw('DATE(created_at) as order_date, COUNT(*) as order_count')
+        ->get();
+
+        return $this->sendSuccess()->view('your-view-name', compact('completedOrderCountByDate'));
+    }
+
+    public function numberOfOrdersFailed(){
+        $completedOrderCountByDate = Order::where('status', 'completed')
+        ->groupBy('created_at')
+        ->selectRaw('DATE(created_at) as order_date, COUNT(*) as order_count')
+        ->get();
+
+        return $this->sendSuccess()->view('your-view-name', compact('completedOrderCountByDate'));
+    }
 }
