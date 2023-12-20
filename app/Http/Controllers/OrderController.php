@@ -128,6 +128,7 @@ class OrderController extends Controller
             $user = User::where('id',$id)->first();
             $point_total = $order->orderItems->sum('quantity') + $user->point;
             $user->point = $point_total;
+            MailController::sendOrderEmail($user->name, $user->email, $token,$order);
             $user->save();
             $order->save();
             return $this->sendSuccess($order,null,"Order has changed status: COMPLETED");
