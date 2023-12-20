@@ -4,6 +4,7 @@ namespace App\Models\Product;
 
 use App\Models\Cart\Cart;
 use App\Models\Order\OrderItems;
+use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,13 +15,15 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'description',
         'thumbnail',
         'price',
     ];
     protected $guarded = ['id'];
 
-    protected $visible = ['id','name','description','thumbnail','price','images'];
+    protected $visible = ['code','name','description','thumbnail','price','reviews'];
+
     public function orderItems()
     {
         return $this->hasMany(OrderItems::class);
@@ -31,7 +34,7 @@ class Product extends Model
         return $this->hasMany(Images::class);
     }
 
-    public function review()
+    public function reviews()
     {
         return $this->hasMany(Review::class);
     }

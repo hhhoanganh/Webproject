@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Authenication\Enum\Status;
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
 use App\Models\Order\OrderItems;
@@ -11,14 +12,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use PHPUnit\TextUI\Configuration\Constant;
 
 class OrderController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
-
     public function addOrders(Request $request)
     {
         $user = Auth::user();
@@ -34,7 +31,7 @@ class OrderController extends Controller
         $coupon =  $user->coupon;
 
         // Create a new order
-        $order = Order::updateOrCreate(
+        $order = Order::create(
             [
                 'user_id' => $user->id,
                 'status' => OrderStatus::PENDING,
@@ -65,13 +62,12 @@ class OrderController extends Controller
 
             $orderItem->save();
         }
-
-        $order->total = $order->orderItems->sum('price');
-        $order->save();
         $token = strtoupper(Str::random(6));
-        if ($order->status === OrderStatus::PENDING) {
-            MailController::sendSignUpEmail($user->name, $user->email, $token);
-        }
+        $order->code = $token;
+        $order->total = $order->orderItems->sum('price');
+        MailController::sendOrderEmail($user->name, $user->email, $token,$order);
+        $order->save();
+
         return $this->sendSuccess($order);
     }
 
@@ -89,9 +85,10 @@ class OrderController extends Controller
 
     public function verifyOrder(Request $request)
     {
-        $user = Auth::user();
-        $order = Order::where('code',$request['token'])->get();
-        $carts = Cart::where('user_id', $user->id)->get();
+        $order = Order::where('code', $request['token'])->first();
+        //        dd($order);
+        $id = $order->user_id;
+        $carts = Cart::where('user_id', $id)->get();
         if ($carts) {
             $cartIds = $carts->map(function ($cart) {
                 return $cart->id;
@@ -129,7 +126,21 @@ class OrderController extends Controller
                 return $this->sendSuccess($order,null,"Order has changed status: COMPLETED");
             }
         }
-
+        return $this->sendError('Order not found',AppConstant::NOT_FOUND_CODE);
     }
 
+    public function cancelOrder(Request $request)
+    {
+        $this->validate($request, [
+            'reason' => 'required',
+        ]);
+        $order = Order::where('code',$request['code']);
+        if ($order->status === OrderStatus::WAIT_CONFIRMED) {
+            $order->status = OrderStatus::CANCEL;
+            $order->refusal_reason = $request->input(['reason']);
+            $order->save();
+            return $this->sendSuccess($order,null,'Order has cancelled');
+        }
+        return  $this->sendError("You can't cancel order",AppConstant::BAD_REQUEST_CODE);
+    }
 }

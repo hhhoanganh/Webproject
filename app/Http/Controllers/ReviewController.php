@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Authenication\Enum\RoleEnum;
-use App\Models\Authenication\Enum\Status;
-use app\Models\Authenication\Role;
 use App\Models\Order\Order;
 use App\Models\Order\OrderStatus;
 use App\Models\Product\Product;

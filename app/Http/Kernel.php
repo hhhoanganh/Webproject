@@ -44,8 +44,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-        'permission' => [\App\Http\Middleware\Permission::class]
-
+        'permission' => [\App\Http\Middleware\Permission::class],
     ];
 
     /**
@@ -70,7 +69,6 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
-        // ...
         'permission' => \App\Http\Middleware\Permission::class,
     ];
 }

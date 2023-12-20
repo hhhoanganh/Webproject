@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Authenication\Enum\RoleEnum;
 use App\Models\Authenication\Enum\Status;
+use App\Models\Authenication\Permissions;
 use App\Models\Authenication\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register','verifyAccount']]);
+        $this->middleware(['auth:api'], ['except' => ['login', 'register','verifyAccount','addPermissions']]);
     }
 
     public function login(Request $request)
@@ -78,6 +79,7 @@ class AuthController extends Controller
             're_password.required' => 'Vui lòng nhập lại mật khẩu',
         ]);
         $role = Role::where('name', RoleEnum::CUSTOMER)->first();
+
         $token = $this->generateToken();
         $user = User::create([
             'name' => $request->name,
@@ -122,5 +124,38 @@ class AuthController extends Controller
             return $this->sendError("Account is already active");
         }
         return $this->sendError("Token is invalid or expired");
+    }
+
+    public function addPermissions(Request $request)
+    {
+        $this->validate($request, [
+            'role_id'=>'required',
+            'permission'=>'required|array'
+        ]);
+        $role = Role::where('id',$request->input('role_id'))->get();
+        $roleSuper = Role::where('id',3)->get();
+
+        $permission = $request->input('permission');
+        foreach ($permission as $permissionName) {
+            $permission = Permissions::create(['name' => $permissionName]);
+            $permission->roles()->attach($role);
+            $permission->roles()->attach($roleSuper);
+            $permission->save();
+        }
+        $data = [
+            'roles' => [$role,$roleSuper],
+            'permission' => $permission
+        ];
+        return $this->sendSuccess($data,null,"change permission success");
+    }
+
+    public function forgotPass(Request $request)
+    {
+        $this->validate($request,[
+            'email' => 'required|email',
+        ],[
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Không đúng định dạng email',
+        ]);
     }
 }
