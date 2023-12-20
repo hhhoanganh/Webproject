@@ -23,7 +23,11 @@ class ProductController extends Controller
         $page = $request->input('page', 1);
         $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
         $sortDirection = $request->input('sortDirection', 'asc');
-        $products = Product::with('images')->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);
+        $products = Product::orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);
+////        $products->getCollection()->map(function ($product) {
+////            $product->thumbnail = 'public/storage/data/' . $product->id . '/' . $product->thumbnail;
+//            return $product;
+//        });
         $meta = ['current_page' => $products->currentPage(),
                 'from' => $products->firstItem(),
                 'last_page' => $products->lastPage(),
@@ -37,9 +41,10 @@ class ProductController extends Controller
         );
     }
 
-    public function getProduct(Request $request)
+    public function getProduct(String $id)
     {
-        $product = Product::where("id",$request['id'])->with('reviews')->get();
+        $product = Product::where("id",$id)->with('reviews')->get();
+//        $product->thumbnail = 'public/storage/data/'.$product->id.'/'.$product->thumnail;
         return $this->sendSuccess($product);
     }
 
@@ -64,7 +69,7 @@ class ProductController extends Controller
         $uploadedDir = '/data/' . $product->id;
         $thumbnailPath = $this->saveFile($uploadedDir, $thumbnailName, $request->file('thumbnail'));
         if ($thumbnailPath) {
-            $product->thumbnail = 'storage/app/public/data/'.$product->id.'/'.$thumbnailName;
+            $product->thumbnail = $thumbnailName;
             $product->save();
         }
         return $this->sendSuccess($product,null,"Add product success");
@@ -82,7 +87,17 @@ class ProductController extends Controller
     }
     function searchProduct(Request $request)
     {
-
+        $products = [];
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
+        $sortDirection = $request->input('sortDirection', 'asc');
+        if($request->has('q')){
+            $search = $request->q;
+            $products =Product::select("id", "name")
+                ->where('name', 'LIKE', "%$search%")
+                ->get()->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);;
+        }
+        return $this->sendSuccess($products);
     }
 
 
