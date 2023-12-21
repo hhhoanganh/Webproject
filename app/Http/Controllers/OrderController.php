@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api');
+        // $this->middleware('auth:api');
     }
 
     public function addOrders(Request $request)
@@ -77,12 +77,49 @@ class OrderController extends Controller
         return $this->sendSuccess($totals);
     }
 
-    public function numberOfStatus($status){
-        $completedOrderCountByDate = Order::where('status', $status)
-        ->groupBy('created_at')
-        ->selectRaw('DATE(created_at) as order_date, COUNT(*) as order_count')
-        ->get();
+    public function numberOfStatus(){
+        $totals1 = Order::where('status', 'COMPLETED')
+        ->with('orderItems') // Load mối quan hệ OrderItem
+        ->get()
+        ->flatMap(function ($order) {
+            return $order->orderItems->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d');
+            })->map(function ($items) {
+                return [
+                'order_date' => $items->first()->created_at->format('Y-m-d'),
+                'total_order' => $items->count(),
+                ];
+            });
+        });
 
-        return $this->sendSuccess()->view('number of success', compact('completedOrderCountByDate'));
+        $totals2 = Order::where('status', 'CANCEL')
+        ->with('orderItems') // Load mối quan hệ OrderItem
+        ->get()
+        ->flatMap(function ($order) {
+            return $order->orderItems->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d');
+            })->map(function ($items) {
+                return [
+                'order_date' => $items->first()->created_at->format('Y-m-d'),
+                'total_order' => $items->count(),
+                ];
+            });
+        });
+
+        $totals3 = Order::where('status', 'SHIPPING')
+        ->with('orderItems') // Load mối quan hệ OrderItem
+        ->get()
+        ->flatMap(function ($order) {
+            return $order->orderItems->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d');
+            })->map(function ($items) {
+                return [
+                'order_date' => $items->first()->created_at->format('Y-m-d'),
+                'total_order' => $items->count(),
+                ];
+            });
+        });
+
+        return $this->sendSuccess(['totals1' => $totals1, 'totals2' => $totals2, 'totals3' => $totals3]);
     }
 }
