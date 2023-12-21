@@ -2,27 +2,33 @@
 
 namespace App\Models;
 
-use App\Models\Authenication\Permissions;
-use App\Models\Authenication\Role;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use app\Models\Authenication\Permissions;
+use app\Models\Authenication\Role;
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject,MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $table = "users";
     protected $fillable = [
         'name',
         'email',
@@ -33,7 +39,9 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
         'verification_code',
         'token_expires_at',
         'point',
-        'coupon'
+        'coupon',
+        'social_id',
+        'social_type'
     ];
 
     /**
@@ -44,7 +52,24 @@ class User extends Authenticatable implements JWTSubject,MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
 
     /**
      * The attributes that should be cast.

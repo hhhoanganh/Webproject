@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\FacebookSocialiteController;
+use App\Http\Controllers\GoogleSocialiteController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -25,7 +27,17 @@ use App\Http\Controllers\AuthController;
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/verify',[AuthController::class,'verifyAccount']);
-    })->middleware(['auth:api']);
+//        Route::
+    })->middleware('auth:api');
+    Route::group(['prefix' => '/v1/'], function () {
+        Route::get('auth/facebook', [FacebookSocialiteController::class, 'redirectToFB']);
+        Route::get('callback/facebook', [FacebookSocialiteController::class, 'handleCallback']);
+    });
+Route::group(['prefix' => '/v1/'], function () {
+    Route::get('auth/google', [GoogleSocialiteController::class, 'redirectToGoogle']);
+    Route::get('callback/google', [GoogleSocialiteController::class, 'handleCallback']);
+});
+
 Route::post('/v1/changePermission',[AuthController::class,'addPermissions'])
     ->middleware(['permission:add_permission']);
 
@@ -41,7 +53,7 @@ Route::group(['prefix' => '/v1/orders'], function () {
         Route::get(null,[OrderController::class,'getOrders']);
         Route::get('/{code}',[OrderController::class,'getOrder']);
 //        Route::post()
-    })->middleware(['auth:api']);
+    })->middleware(['auth:sanctum']);
 
 Route::get('/v1/verifyOrder',[OrderController::class,'verifyOrder']);
 Route::post('/v1/changeStatusOrder',[OrderController::class,'changeStatusOrder'])
