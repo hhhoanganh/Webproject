@@ -1,0 +1,76 @@
+/*
+Theme Name: Flatsome Child
+Description: This is a child theme for Flatsome Theme
+Author: UX Themes
+Template: flatsome
+Version: 3.0
+*/
+
+/*************** ADD CUSTOM CSS HERE.   ***************/
+#related_posts .col {
+  float: left;
+  margin-left: 0;
+  list-style: none;
+}
+.relatedcontent h3 {
+  font-size: 16px;
+  margin-top: 7px;
+}
+.relatedthumb img {
+  height: 100%;
+  max-height: 165px;
+}
+#related_posts {
+  border-top: 4px double #e8e8e8;
+        padding-top: 10px;
+}
+#related_posts li:nth-child(1) {
+  padding-left: 0 !important;
+}
+#related_posts li:nth-child(2) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+#related_posts li:nth-child(3) {
+  padding-right: 0 !important;
+}
+.relatedthumb img {
+  min-height: 125px;
+}
+/*********/
+
+
+
+
+@media only screen and (max-width: 48em) {
+/*************** ADD MOBILE ONLY CSS HERE  ***************/
+#related_posts .col {
+  float: left;
+  margin-left: 0;
+  list-style: none;
+}
+.relatedcontent h3 {
+  font-size: 16px;
+  margin-top: 7px;
+}
+.relatedthumb img {
+  height: 100%;
+  max-height: 165px;
+}
+#related_posts {
+  border-top: 4px double #e8e8e8;
+        padding-top: 10px;
+}
+#related_posts li:nth-child(1) {
+  padding-left: 0 !important;
+}
+#related_posts li:nth-child(2) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+#related_posts li:nth-child(3) {
+  padding-right: 0 !important;
+}
+.relatedthumb img {
+  min-height: 125px;
+}
