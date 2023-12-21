@@ -9,7 +9,7 @@ class CheckAdminRole
 {
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && (Auth::user()->role === 'admin' || Auth::user()->role === 'superadmin')) {
+        if (Auth::check() && (Auth::user()->role === 'ADMIN' || Auth::user()->role === 'SUPERADMIN')) {
             return $next($request);
         }
 
