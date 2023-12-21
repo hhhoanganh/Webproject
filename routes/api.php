@@ -40,6 +40,7 @@ Route::group(['prefix' => '/v1/orders'], function () {
         Route::post(null,[OrderController::class,'addOrders']);
         Route::get(null,[OrderController::class,'getOrders']);
         Route::get('/{code}',[OrderController::class,'getOrder']);
+        Route::post('/search',[ProductController::class,'searchProduct']);
 //        Route::post()
     })->middleware(['auth:api']);
 
@@ -65,4 +66,5 @@ Route::group(['prefix' => '/v1/reviews'], function () {
     Route::put(null,[\App\Http\Controllers\ReviewController::class,'editReview']);
     Route::delete(null,[\App\Http\Controllers\ReviewController::class,'deleteReview']);
 })->middleware(['permission:review']);
-
+Route::get('/v1/admin/sales',[OrderController::class,'salesOrders']);
+Route::get('/v1/admin/status',[OrderController::class,'numberOfStatus']);

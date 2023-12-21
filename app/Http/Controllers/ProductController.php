@@ -85,20 +85,32 @@ class ProductController extends Controller
 
         return $path;
     }
-//    function searchProduct(Request $request)
-//    {
-//        $products = [];
-//        $page = $request->input('page', 1);
-//        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
-//        $sortDirection = $request->input('sortDirection', 'asc');
-//        if($request->has('q')){
-//            $search = $request->q;
-//            $products =Product::select("id", "name")
-//                ->where('name', 'LIKE', "%$search%")
-//                ->get()->orderBy($sortBy, $sortDirection)->paginate(self::$size,['*'], 'page', $page);;
-//        }
-//        return $this->sendSuccess($products);
-//    }
+    public function searchProduct(Request $request){
+        $request->validate([
+            'page' => 'nullable|integer|min:1',
+            'sortBy' => 'nullable|string|in:name,price',
+            'sortDirection' => 'nullable|in:asc,desc',
+        ]);
+        $value = $request->value;
+        $page = $request->input('page', 1);
+        $sortBy = $request->input('sortBy', 'id'); // Default to sorting by 'id'
+        $sortDirection = $request->input('sortDirection', 'asc');
+        $products = Product::with('images')
+            ->where('name', 'like', '%' . $value . '%')
+            ->orderBy($sortBy, $sortDirection)
+            ->paginate(self::$size,['*'], 'page', $page);
+        $meta = ['current_page' => $products->currentPage(),
+                'from' => $products->firstItem(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'to' => $products->lastItem(),
+                'total' => $products->total(),];
+
+        return $this->sendSuccess(
+            $products->items(),
+            $meta
+        );
+    }
 
 
 }
