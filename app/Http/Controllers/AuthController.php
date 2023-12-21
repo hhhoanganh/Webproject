@@ -79,8 +79,7 @@ class AuthController extends Controller
             'name.required' => 'Vui lòng nhập tên',
             're_password.required' => 'Vui lòng nhập lại mật khẩu',
         ]);
-        $role = Role::where('name', RoleEnum::CUSTOMER)->first();
-
+        $role = Role::where('name', RoleEnum::CUSTOMER->name)->first();
         $token = $this->generateToken();
         $user = User::create([
             'name' => $request->name,
@@ -91,10 +90,8 @@ class AuthController extends Controller
             'verification_code' => $token,
             'token_expires_at' => Carbon::now()->addMinutes(5)
         ]);
-        $role->users()->attach($user);
-        if ($user->status == Status::INACTIVE) {
-            MailController::sendSignUpEmail($user->name, $user->email, $token);
-        }
+        $user->roles()->attach($role);
+        MailController::sendSignUpEmail($user->name, $user->email, $token);
         return $this->sendSuccess(
             ['token_verify'=>$token],
             "Please Check Your Email To Active Account");

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Authenication\Enum\Status;
+use app\Models\Authenication\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
-use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\Auth;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class GoogleSocialiteController extends Controller
 {
@@ -24,33 +27,46 @@ class GoogleSocialiteController extends Controller
     public function handleCallback()
     {
         try {
-
             $user = Socialite::driver('google')->stateless()->user();
+            $findUser = User::where('social_id', $user->id)->first();
 
-            $finduser = User::where('social_id', $user->id)->first();
+            if ($findUser) {
+                $token = JWTAuth::fromUser($findUser);
+                $user = Auth::user();
+                return $this->sendSuccess([
+                    'user' => $user,
+                    'token' => $token,
+                    'authorization' => [
+                        'type' => 'bearer'
+                    ]
+                ], null, "Login Successful!");
 
-            if($finduser){
-
-                Auth::login($finduser);
-
-                return $this->sendSuccess($finduser);
-
-            }else{
+            } else {
                 $newUser = User::create([
                     'name' => $user->name,
                     'email' => $user->email,
-                    'social_id'=> $user->id,
-                    'social_type'=> 'google',
-                    'password' => encrypt('my-google')
+                    'social_id' => $user->id,
+                    'social_type' => 'facebook',
+                    'password' => bcrypt('my-facebook'), // Use bcrypt for password hashing
+                    'status' => Status::ACTIVE,
                 ]);
-
-                Auth::login($newUser);
-
-                return $this->sendSuccess($newUser);
+                $role = Role::where('id', 3)->first();
+                $newUser->roles()->attach($role);
+                $newUser->save();
+                $token = JWTAuth::fromUser($findUser);
+                $user = Auth::user();
+                return $this->sendSuccess([
+                    'user' => $user,
+                    'token' => $token,
+                    'authorization' => [
+                        'type' => 'bearer',
+                    ]
+                ], null, "Login Successful!");
             }
 
         } catch (Exception $e) {
-            dd($e->getMessage());
+            // Log the error or handle it appropriately
+            return $this->sendError("Error occurred", AppConstant::INTERNAL_SERVER_ERROR_CODE);
         }
     }
 }

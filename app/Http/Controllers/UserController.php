@@ -52,4 +52,9 @@ class UserController extends Controller
         $message = "Password has been updated";
         return $this->sendSuccess($user,null,$message);
     }
+
+    public function changeCoupon()
+    {
+
+    }
 }

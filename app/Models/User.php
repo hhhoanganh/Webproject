@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use app\Models\Authenication\Permissions;
+use App\Models\Authenication\Permissions;
 use app\Models\Authenication\Role;
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
