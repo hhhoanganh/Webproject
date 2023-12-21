@@ -15,14 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('verification_code')->nullable();
-            $table->string('phone')->nullable();
-            $table->integer("status",false,false)->default(0);
-            $table->dateTime('token_expires_at')->nullable();
-            $table->string("address")->nullable();
-            $table->integer('coupon')->nullable();
-            $table->integer('point')->nullable();
+            $table->rememberToken();
+            $table->foreignId('current_team_id')->nullable();
+            $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
         });
     }
