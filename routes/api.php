@@ -52,7 +52,6 @@ Route::group(['prefix' => '/v1/orders'], function () {
         Route::post(null,[OrderController::class,'addOrders']);
         Route::get(null,[OrderController::class,'getOrders']);
         Route::get('/{code}',[OrderController::class,'getOrder']);
-        Route::post('/search',[ProductController::class,'searchProduct']);
 //        Route::post()
     })->middleware(['auth:sanctum']);
 
@@ -71,6 +70,9 @@ Route::group(['prefix' => '/v1/carts'], function () {
     Route::get(null,[\App\Http\Controllers\CartController::class,'getCart']);
     Route::post(null,[\App\Http\Controllers\CartController::class,'addCart']);
 })->middleware(['permission:READ']);
+
+Route::get('/v1/search',[ProductController::class,'searchProduct']);
+Route::get('/v1/productname',[ProductController::class,'nameProduct']);
 
 Route::group(['prefix' => '/v1/reviews'], function () {
     Route::post(null,[\App\Http\Controllers\ReviewController::class,'addReview']);
