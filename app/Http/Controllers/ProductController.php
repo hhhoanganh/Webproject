@@ -112,5 +112,13 @@ class ProductController extends Controller
         );
     }
 
+    public function nameProduct(Request $request)
+    {
+        $value = $request->value;
+        $product = Product::where("name",$value)->with('reviews')->get();
+//        $product->thumbnail = 'public/storage/data/'.$product->id.'/'.$product->thumnail;
+        return $this->sendSuccess($product);
+    }
+
 
 }
