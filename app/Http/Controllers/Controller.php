@@ -20,14 +20,14 @@ class Controller extends BaseController
         ], data_get($option, "status_code",400));
     }
 
-    public function sendSuccess($data = [], $message = "")
+    public function sendSuccess($data = [], $meta = [], $message = "success")
     {
-        return Response::json([
-            'status' => AppConstant::SUCCESS_CODE,
-            'error_code' => 0,
-            'message' => $message,
-            'data' => $data
-        ]);
-
+            return Response::json([
+                'status' => AppConstant::SUCCESS_CODE,
+                'error_code' => 0,
+                'message' => $message,
+                'data' => $data,
+                'meta' => $meta
+            ]);
     }
 }

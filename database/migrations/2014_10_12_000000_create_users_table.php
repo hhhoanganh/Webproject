@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('status', ['active', 'inactive'])->default('inactive'); // Enum type for 'status'
-            $table->rememberToken();
+            $table->string('verification_code')->nullable();
+            $table->string('phone')->nullable();
+            $table->integer("status",false,false)->default(0);
+            $table->dateTime('token_expires_at')->nullable();
+            $table->string("address")->nullable();
+            $table->integer('coupon')->nullable();
+            $table->integer('point')->nullable();
             $table->timestamps();
         });
     }

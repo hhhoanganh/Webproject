@@ -42,7 +42,7 @@ return [
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            'timeout' => 60,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
 
@@ -60,9 +60,9 @@ return [
         'postmark' => [
             'transport' => 'postmark',
             // 'message_stream_id' => null,
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
+//            'client' => [
+//                'timeout' => 60,
+//            ],
         ],
 
         'sendmail' => [
