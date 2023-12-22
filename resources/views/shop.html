@@ -32,6 +32,9 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+
+    </style>
 
 </head>
 
@@ -196,7 +199,7 @@
                         <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
                         <li class="side-menu"><a href="#">
                                 <i class="fa fa-shopping-bag"></i>
-                                <span class="badge">3</span>
+                                <span id="count-cart" class="badge">3</span>
                             </a></li>
                     </ul>
                 </div>
@@ -206,25 +209,12 @@
             <div class="side">
                 <a href="#" class="close-side"><i class="fa fa-times"></i></a>
                 <li class="cart-box">
-                    <ul class="cart-list">
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-01.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Delica omtantur </a></h6>
-                            <p>1x - <span class="price">$80.00</span></p>
+                    <ul id="show-cart" class="cart-list">
+ <!--------------------><li>
+    
                         </li>
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-02.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Omnes ocurreret</a></h6>
-                            <p>1x - <span class="price">$60.00</span></p>
-                        </li>
-                        <li>
-                            <a href="#" class="photo"><img src="images/img-pro-03.jpg" class="cart-thumb" alt="" /></a>
-                            <h6><a href="#">Agam facilisis</a></h6>
-                            <p>1x - <span class="price">$40.00</span></p>
-                        </li>
-                        <li class="total">
-                            <a href="#" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                            <span class="float-right"><strong>Total</strong>: $180.00</span>
+                        <li id="show-totals" class="total">
+<!------------------------------->
                         </li>
                     </ul>
                 </li>
@@ -271,7 +261,8 @@
                     <div class="product-categori">
                         <div class="search-product">
                             <form action="#">
-                                <input class="form-control" placeholder="Search here..." type="text">
+                                <input id="searchInput" class="form-control" placeholder="Search here..." type="text">
+                                <p id="suggestionsList"></p>
                                 <button type="submit"> <i class="fa fa-search"></i> </button>
                             </form>
                         </div>
@@ -445,17 +436,33 @@
                             <div class="tab-content">
                                 <div role="tabpanel" class="tab-pane fade show active" id="grid-view">
                                     <div id="productContainer" class="row">
-                                        <!-- all product -->
-
+                                        <!-- all product in grid view -->
                                     </div>
-<!---------------------------------><button id="paginationProduct" ></button>
+                                    <div id="paginationProduct" class="pagination-container">
+                                        <!-- pagination buttons will be added dynamically here -->
+                                    </div>
                                 </div>
+
                                 <div role="tabpanel" class="tab-pane fade" id="list-view">
-                                    <div id="productContainerDetail" class="list-view-box">
-
+                                    <div id="productContainerDetail" class="row">
+                                        <!-- all product in list view -->
                                     </div>
-<!----------------------------------><button id="paginationProductDetail"></button>
+                                    <div id="paginationProductDetail" class="pagination-container">
+                                        <!-- pagination buttons will be added dynamically here -->
+                                    </div>
                                 </div>
+<!----------------------------------------->
+                                <div role="tabpanel" class="tab-pane fade" id="list-view-searcch">
+                                    <div id="productContainerSearch" class="list-view-box">
+                                        <!-- all product in list view -->
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane fade" id="list-view-search">
+                                    <div id="productContainerDetailSearch" class="list-view-box">
+                                        <!-- all product in list view -->
+                                    </div>
+                                </div>
+<!---------------------------------------->
                             </div>
                         </div>
 
@@ -645,6 +652,8 @@
     <script src="js/custom.js"></script>
     <script src="js/product.js"></script>
     <script src="js/productDetail.js"></script>
+    <script src="js/searchSuggestion.js"></script>
+    <script src="js/addCart.js"></script>
 </body>
 
 </html>
