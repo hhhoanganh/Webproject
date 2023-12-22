@@ -70,3 +70,7 @@ Route::group(['prefix' => ''], function () {
     Route::get('/v1/admin/sales', [OrderController::class, 'salesOrders'])->middleware('admin');
     Route::get('/v1/admin/status', [OrderController::class, 'numberOfStatus'])->middleware('admin');
 })->middleware([]);
+
+
+Route::get('/v1/search',[ProductController::class,'searchProduct']);
+Route::get('/v1/productname',[ProductController::class,'nameProduct']);
